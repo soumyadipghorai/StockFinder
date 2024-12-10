@@ -3,7 +3,7 @@
 data/master_data.csv
 .venv
 
-*.txt
+task.txt
 
 
 # Ignore Python bytecode and cache files
