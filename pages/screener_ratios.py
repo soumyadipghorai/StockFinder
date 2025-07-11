@@ -1,11 +1,8 @@
 import streamlit as st 
 import pandas as pd 
 from _temp.config import *
-from md.cashflow import *
-from md.ratios import *
+from md import MAPPER
 from utils.trend_analysis import classify_trend
-
-
 
 try : df = pd.read_csv('data/ratio_table.csv')
 except : df = None 
@@ -18,21 +15,10 @@ if df is not None :
         st.title("Screener Ratios Analysis")
         st.write("Explore essential financial ratios to evaluate stock performance, stability, and growth potential.")
         st.write(COMPANY_DATAILS.format(company_name = st.session_state.company_name))
-        option = st.selectbox(label= 'select feature', options= all_options)
+        option = st.selectbox(label= 'select feature', options= all_options) 
 
         with st.popover(label = f"Read More...", use_container_width= False) : 
-            if option == 'Debtor Days' :
-                st.markdown(debtor_days)
-            elif option == "Inventory Days" :
-                st.markdown(inventory_days)
-            elif option == "Days Payable" : 
-                st.markdown(days_payable)
-            elif option == "Cash Conversion Cycle" :
-                st.markdown(cash_conversion)
-            elif option == "Working Capital Days" :
-                st.markdown(working_capital)
-            elif option == "ROCE %" :
-                st.markdown(ROCE)
+            st.markdown(MAPPER[option] if option in MAPPER else MAPPER["others"])
 
     with col2 :
         row_index = df[df[df.columns[0]] == option].index[0]
@@ -44,26 +30,31 @@ if df is not None :
         row_index = df.index[df[df.columns[0]] == 'Debtor Days'][0]
         values = list(df.iloc[row_index, 1:].values) 
         debtor_days_res = classify_trend(values) 
+    else : debtor_days_res = None
 
     if "Inventory Days" in df[df.columns[0]].values :  
         row_index = df.index[df[df.columns[0]] == 'Inventory Days'][0]
         values = list(df.iloc[row_index, 1:].values) 
-        inventory_days_res = classify_trend(values)  
+        inventory_days_res = classify_trend(values) 
+    else : inventory_days_res = None 
 
     if "Days Payable" in df[df.columns[0]].values :  
         row_index = df.index[df[df.columns[0]] == 'Days Payable'][0]
         values = list(df.iloc[row_index, 1:].values) 
         days_payable_res = classify_trend(values) 
+    else : days_payable_res = None
 
     if "Working Capital Days" in df[df.columns[0]].values :  
         row_index = df.index[df[df.columns[0]] == 'Working Capital Days'][0]
         values = list(df.iloc[row_index, 1:].values) 
         wc_res = classify_trend(values) 
+    else : wc_res = None
 
     if "Cash Conversion Cycle" in df[df.columns[0]].values :  
         row_index = df.index[df[df.columns[0]] == 'Cash Conversion Cycle'][0]
         values = list(df.iloc[row_index, 1:].values) 
         ccc_res = classify_trend(values) 
+    else : ccc_res = None
         
     with col1 : 
         if debtor_days_res :

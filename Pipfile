@@ -9,6 +9,8 @@ tqdm = "*"
 bs4 = "*"
 plotly = "*"
 scipy = "*"
+selenium = "*"
+sqlalchemy = "*"
 
 [dev-packages]
 

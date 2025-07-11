@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd 
 from _temp.config import *
 import plotly.express as px 
-from md.shareholder import *
+from md import MAPPER
 
 try : df = pd.read_csv('data/shareholding_pattern.csv')
 except : df = None 
@@ -17,18 +17,7 @@ if df is not None :
         st.write(COMPANY_DATAILS.format(company_name = st.session_state.company_name))
         option = st.selectbox(label= 'select feature', options= all_options)
         with st.popover(label = f"Read More...", use_container_width= False) : 
-            if option[:3] == "Pro" :
-                st.markdown(promoter_md)
-            elif option[:3] == "FII" :
-                st.markdown(FII_md)
-            elif option[:3] == 'DII' : 
-                st.markdown(DII_md)
-            elif option[:3] == "Pub" :
-                st.markdown(public_md)
-            elif option[:3] == "Gov" :
-                st.markdown(gov_md)
-            elif option[:3] == "No." :
-                st.markdown(num_sh_md)
+            st.markdown(MAPPER[option[:3]] if option[:3] in MAPPER else MAPPER["others"])
 
     with col2 :
         row_index = df[df[df.columns[0]] == option].index[0]

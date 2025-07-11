@@ -3,8 +3,12 @@
 data/master_data.csv
 .venv
 
-task.txt
+*.txt
 
+*.exe 
+
+dump
+database
 
 # Ignore Python bytecode and cache files
 __pycache__/
@@ -25,3 +29,7 @@ venv/
 *.swp
 *.swo
 .DS_Store
+
+# Ignore all CSV and DB files recursively
+**/*.csv
+**/*.db

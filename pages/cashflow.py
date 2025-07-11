@@ -1,6 +1,6 @@
 import streamlit as st 
 import pandas as pd 
-from md.cashflow import *
+from md import MAPPER
 from _temp.config import *
 
 try : df = pd.read_csv('data/cash_flow.csv')
@@ -11,24 +11,23 @@ if df is not None :
     total_operation = sum(df.iloc[0][1:])
     total_investing = sum(df.iloc[1][1:])
     total_finance = sum(df.iloc[2][1:])
-    total_debt = total_operation + total_investing
+    total_debt = total_operation + total_investing 
 
-    col1, _, col2 = st.columns([1, 0.1, 2])
+    col1, _, col2 = st.columns([1, 0.1, 2]) 
     with col1 :
         st.title('Cash flow')
         st.write("Cash flow statement gives exact cash position of a company")
         st.write(COMPANY_DATAILS.format(company_name = st.session_state.company_name))
         option = st.selectbox(label= 'select feature', options= all_options)
         interest_rate = st.slider(label = 'select interest rate', min_value=4, max_value=50)
+        if "operating" in option.lower() : mapper_key = "Operating"
+        elif "investing" in option.lower() : mapper_key = "Investing"
+        elif "financing" in option.lower() : mapper_key = "Financing"
+        elif "net cash" in option.lower() : mapper_key = "Net Cash Flow"
+        else : mapper_key = "others"
+        
         with st.popover(label = f"Read More...", use_container_width= False) : 
-            if option == all_options[0] :
-                st.markdown(operating_cashflow)
-            elif option == all_options[1] :
-                st.markdown(investing_cashflow)
-            elif option == all_options[2] : 
-                st.markdown(financing_cashflow)
-            elif option == all_options[3] :
-                st.markdown("Total of the above 3 cashflow...")
+            st.markdown(MAPPER[mapper_key] if mapper_key in MAPPER else MAPPER["others"])
 
 
     with col2 :
