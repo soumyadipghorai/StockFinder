@@ -3,7 +3,7 @@
 data/master_data.csv
 .venv
 
-*.txt
+./task.txt
 
 *.exe 
 
