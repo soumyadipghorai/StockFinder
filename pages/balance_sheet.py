@@ -1,6 +1,7 @@
 import streamlit as st 
 import pandas as pd 
 from _temp.config import *
+from md import MAPPER
 
 try : df = pd.read_csv('data/balance_sheet.csv')
 except :  df = None
@@ -14,6 +15,9 @@ if not df is None :
         st.write("View company assets, liabilities, and equity snapshots for clear insights into financial health and stability.")
         st.write(COMPANY_DATAILS.format(company_name = st.session_state.company_name))
         option = st.selectbox(label= 'select feature', options= all_options)
+        mapper_key = option[:-1].replace('\xa0', '').strip() if option[-1] == '+' else option.replace('\xa0', '').strip()  
+        with st.popover(label = f"Read More...", use_container_width= False) : 
+            st.markdown(MAPPER[mapper_key] if mapper_key in MAPPER else MAPPER["others"])
 
     with col2 :
         row_index = df[df[df.columns[0]] == option].index[0]

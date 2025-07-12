@@ -1,6 +1,7 @@
 from md.cashflow import *
 from md.ratios import *
 from md.shareholder import *
+from md.balancesheet import *
 
 MAPPER = {
     "others" : "Google it! :)", 
@@ -19,5 +20,15 @@ MAPPER = {
     "Operating" : operating_cashflow,
     "Investing" : investing_cashflow,
     "Financing" : financing_cashflow,
-    "Net Cash Flow" : "Total of the other 3 Cashflow"
+    "Net Cash Flow" : "Total of the other 3 Cashflow",
+    "Equity Capital" : equity_capital, 
+    "Reserves" : reserves,
+    "Borrowings" : borrowings, 
+    "Other Liabilities" : other_liabilities, 
+    "Total Liabilities" : total_liabilities,
+    "Fixed Assets" : fixed_assets, 
+    "CWIP" : CWIP,
+    "Investments" : investments, 
+    "Other Assets" : other_assets,
+    "Total Assets" : total_assets
 } 
