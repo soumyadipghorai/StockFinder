@@ -16,22 +16,20 @@ if df is not None :
         st.write("Overview of share distribution among Promoters, FIIs, DIIs, and Public stakeholders.")
         st.write(COMPANY_DATAILS.format(company_name = st.session_state.company_name))
         option = st.selectbox(label= 'select feature', options= all_options)
+        remaining = st.multiselect(
+            label= 'select another feature', 
+            options=[rem for rem in all_options if rem != option]
+        ) 
         with st.popover(label = f"Read More...", use_container_width= False) : 
             st.markdown(MAPPER[option[:3]] if option[:3] in MAPPER else MAPPER["others"])
 
     with col2 :
-        row_index = df[df[df.columns[0]] == option].index[0]
-        fig = px.line(df.iloc[row_index][1:], title='Share holding pattern Over Time')
-        fig.update_layout(
-            yaxis=dict(
-                title='Holding percentage' if option != all_options[-1] else option,  
-                range=[0, max(df.iloc[row_index][1:]) * 1.3]  
-            ), xaxis=dict(
-                title='Period', tickangle=90  
-            ), showlegend=False 
-        )
-
-        st.plotly_chart(fig)
+        row_index = df[df[df.columns[0]] == option].index[0] 
+        remaining_index = [
+            df[df[df.columns[0]] == rem].index[0] for rem in remaining
+        ]
+        st.subheader(f'{option} over the years') 
+        st.line_chart(df.iloc[[row_index] + remaining_index].set_index(df.columns[0]).T)
 
 else : 
     st.title("Company Shareholding Pattern")

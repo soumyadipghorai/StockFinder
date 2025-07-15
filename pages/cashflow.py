@@ -19,6 +19,10 @@ if df is not None :
         st.write("Cash flow statement gives exact cash position of a company")
         st.write(COMPANY_DATAILS.format(company_name = st.session_state.company_name))
         option = st.selectbox(label= 'select feature', options= all_options)
+        remaining = st.multiselect(
+            label= 'select another feature', 
+            options=[rem for rem in all_options if rem != option]
+        )
         interest_rate = st.slider(label = 'select interest rate', min_value=4, max_value=50)
         if "operating" in option.lower() : mapper_key = "Operating"
         elif "investing" in option.lower() : mapper_key = "Investing"
@@ -31,9 +35,13 @@ if df is not None :
 
 
     with col2 :
-        row_index = df[df[df.columns[0]] == option].index[0]
+        row_index = df[df[df.columns[0]] == option].index[0] 
+        remaining_index = [
+            df[df[df.columns[0]] == rem].index[0] for rem in remaining
+        ]
         st.subheader(f'{option} over the years') 
-        st.line_chart(df.iloc[row_index][1:])
+        st.line_chart(df.iloc[[row_index] + remaining_index].set_index(df.columns[0]).T)
+
 
     col1, col2, col3, col4, col5, col6 = st.columns(6)
     with col1 : st.metric(value=total_debt, label= 'Calculated Debt', delta=f'{round((total_debt - total_finance)/total_finance*100, 2)} %')

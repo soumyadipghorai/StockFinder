@@ -6,7 +6,6 @@ data/master_data.csv
 ./task.txt
 
 *.exe 
-
 dump
 database
 
@@ -30,6 +29,6 @@ venv/
 *.swo
 .DS_Store
 
-# Ignore all CSV and DB files recursively
+# Ignore all CSV, log and DB files recursively
 **/*.csv
 **/*.db

@@ -24,7 +24,7 @@ class TableExtractor :
             'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8',
         }
 
-        site_page = requests.get(site_url, headers = headers)
+        site_page = requests.get(site_url, headers = headers, verify = False)
         site_page_htmlcontent = site_page.content
         site_page_soup = BeautifulSoup(site_page_htmlcontent, 'html.parser')
 
@@ -127,10 +127,10 @@ class TableExtractor :
                     except :
                         logging.info(f"couldn't get the NSE code for {company_name.text.strip()} --> {company_links.find_all('span', {'class' : 'ink-700 upper'})}")
                 except : 
-                    logging.info(f'can not extract table data --> {row}')
+                    logging.info(f'can not extract table data --> {row.text.strip()}')
         except Exception as e:
             st.error(e) 
-            logging.info(f'can not extract table row --> {all_row}')
+            logging.info(f'can not extract table row --> {all_row.text.strip()}')
 
         return all_url 
         

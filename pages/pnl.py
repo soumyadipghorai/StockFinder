@@ -1,7 +1,7 @@
 import streamlit as st 
 import pandas as pd 
 from _temp.config import *
-import plotly.express as px
+from md import MAPPER
 
 try : df = pd.read_csv('data/profit_loss.csv')
 except : df = None 
@@ -14,11 +14,20 @@ if df is not None :
         st.write("Gain insights into revenue, expenses, and profitability trends for strategic investment analysis.")
         st.write(COMPANY_DATAILS.format(company_name = st.session_state.company_name))
         option = st.selectbox(label= 'select feature', options= all_options)
+        remaining = st.multiselect(
+            label= 'select another feature', 
+            options=[rem for rem in all_options if rem != option]
+        ) 
+        with st.popover(label = f"Read More...", use_container_width= False) : 
+            st.markdown(MAPPER[option] if option in MAPPER else MAPPER["others"])
 
     with col2 :
-        row_index = df[df[df.columns[0]] == option].index[0]
-        st.subheader(f'{option} over the years')
-        st.line_chart(df.iloc[row_index][1:])
+        row_index = df[df[df.columns[0]] == option].index[0] 
+        remaining_index = [
+            df[df[df.columns[0]] == rem].index[0] for rem in remaining
+        ]
+        st.subheader(f'{option} over the years') 
+        st.line_chart(df.iloc[[row_index] + remaining_index].set_index(df.columns[0]).T)
 else :
     st.title("Profit & Loss Statement")
     st.write("Gain insights into revenue, expenses, and profitability trends for strategic investment analysis.")

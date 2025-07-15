@@ -54,7 +54,7 @@ download_btn = st.sidebar.button('Download')
 
 # if sb_button : 
 #     all_url = {}
-#     for i in tqdm(range(1,193)) : #193
+#     for i in tqdm(range(1,201)) : #201 total number of pages
 #         try :
 #             url = f"https://www.screener.in/screens/357649/all-listed-companies/?page={i}"
 #             obj = TableExtractor(url)
