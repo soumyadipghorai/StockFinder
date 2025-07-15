@@ -92,3 +92,11 @@ Contributions are welcome! Please fork the repo and open a pull request. If you 
 ## 📄 License
 
 This project is licensed under the MIT License.
+
+## Contact
+
+For any questions or feedback, please reach out to [work.soumyadipghorai@gmail.com](mailto:work.soumyadipghorai@gmail.com).
+
+---
+
+Happy Investing!
