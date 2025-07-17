@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd 
 
 def detect_significant_drop(sequence, window=4, significance_factor=2):
     if len(sequence) <= window:
@@ -29,3 +30,14 @@ def detect_significant_drop(sequence, window=4, significance_factor=2):
         "recent_values": recent_values,
         "drop_continuation_period": drop_continuation_period,
     }
+
+
+def create_quarterly_growth(df: pd.DataFrame, quarter: str = "Mar", row_index: int = 0) -> tuple: 
+    filter_df = df.iloc[row_index]
+    filter_df = filter_df[filter_df.index.str.startswith(quarter)]
+    raw_diff, perc_diff = [], []
+    for i in range(1, len(filter_df)) : 
+        raw_diff.append(filter_df.iloc[i] - filter_df.iloc[i-1])
+        perc_diff.append(round(((filter_df.iloc[i] - filter_df.iloc[i-1])/filter_df.iloc[i])*100, 2))
+
+    return raw_diff, perc_diff, filter_df

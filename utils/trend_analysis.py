@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.stats import linregress
 from scipy.stats import pearsonr
+import streamlit as st 
 
 def classify_trend(sequence): 
     x = np.arange(len(sequence))
@@ -19,7 +20,7 @@ def classify_trend(sequence):
     y_pred = slope * x + intercept
     ss_total = np.sum(weights * (y - y_mean) ** 2)
     ss_residual = np.sum(weights * (y - y_pred) ** 2)
-    r_squared = 1 - ss_residual / ss_total
+    r_squared = 1 - ss_residual / ss_total if ss_total != 0 else 0
  
     if slope > 0:
         direction = "Upward"
@@ -28,7 +29,7 @@ def classify_trend(sequence):
     else:
         direction = "No Trend"
 
-    correlation = np.sqrt(r_squared) if slope >= 0 else -np.sqrt(r_squared)
+    correlation = np.sqrt(r_squared) if slope >= 0 else -np.sqrt(r_squared) 
 
     if abs(correlation) > 0.75:
         strength = "Strong"

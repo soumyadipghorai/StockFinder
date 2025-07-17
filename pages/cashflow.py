@@ -8,9 +8,9 @@ except : df = None
 
 if df is not None : 
     all_options = [df[df.columns[0]].iloc[i] for i in range(len(df))]
-    total_operation = sum(df.iloc[0][1:])
-    total_investing = sum(df.iloc[1][1:])
-    total_finance = sum(df.iloc[2][1:])
+    total_operation = sum(df.iloc[0][1:].fillna(0))
+    total_investing = sum(df.iloc[1][1:].fillna(0))
+    total_finance = sum(df.iloc[2][1:].fillna(0))
     total_debt = total_operation + total_investing 
 
     col1, _, col2 = st.columns([1, 0.1, 2]) 
@@ -43,15 +43,35 @@ if df is not None :
         st.line_chart(df.iloc[[row_index] + remaining_index].set_index(df.columns[0]).T)
 
 
-    col1, col2, col3, col4, col5, col6 = st.columns(6)
-    with col1 : st.metric(value=total_debt, label= 'Calculated Debt', delta=f'{round((total_debt - total_finance)/total_finance*100, 2)} %')
-    with col2 :
-        condition = round((interest_rate * max(total_debt, abs(total_finance))/100), 2) < df.iloc[0][-1] 
-        st.metric(value="Yes" if condition else "No", label= 'Sustainable', delta= f"{'+ Can' if condition else "- Can't"} Sustain tax")
-    with col3 : st.metric(value=total_operation, label= 'Total Operations') 
-    with col4 : st.metric(value=total_investing, label= 'Total investing') 
-    with col5 : st.metric(value=total_finance, label= 'Total Finance') 
-    with col6 : st.metric(value= round((interest_rate * max(total_debt, total_finance)/100), 2), label= 'Calculated tax', delta = f"{round(((round((interest_rate * total_debt/100), 2) - df.iloc[0][-1])/df.iloc[0][-1]*100), 2)} %") 
+        col1, col2, col3 = st.columns(3)
+        with col1 :  
+            st.metric(
+                value=total_debt, label= 'Calculated Debt', 
+                delta=f'{round((total_debt - total_finance)/total_finance*100, 2)} %',
+                border= True
+            )
+        with col2 :
+            condition = round((interest_rate * max(total_debt, abs(total_finance))/100), 2) < df.iloc[0][-1] 
+            st.metric(
+                value="Yes" if condition else "No", label= 'Sustainable', 
+                delta= f"{'+ Can' if condition else "- Can't"} Sustain tax",
+                border= True
+            )
+        with col3 : 
+            st.metric(
+                value= round((interest_rate * max(total_debt, total_finance)/100)), label= 'Calculated tax', 
+                delta= f"{round(((round((interest_rate * total_debt/100), 2) - df.iloc[0][-1])/df.iloc[0][-1]*100), 2)} %", 
+                border = True
+            ) 
+            
+
+        col4, col5, col6 = st.columns(3)
+        with col4 : 
+            st.metric(value=total_investing, label= 'Total investing', border= True) 
+        with col5 : 
+            st.metric(value=total_finance, label= 'Total Finance', border= True) 
+        with col6 : 
+            st.metric(value=total_operation, label= 'Total Operations', border= True) 
 
 else :
     st.title('Cash flow')

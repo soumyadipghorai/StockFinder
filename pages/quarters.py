@@ -3,6 +3,8 @@ import pandas as pd
 import plotly.express as px
 from _temp.config import *
 from md import MAPPER
+import numpy as np
+from utils.find_drop import create_quarterly_growth
 
 try : df = pd.read_csv('data/quarters.csv')
 except : df = None 
@@ -29,8 +31,40 @@ if df is not None :
         remaining_index = [
             df[df[df.columns[0]] == rem].index[0] for rem in remaining
         ]
-        st.subheader(f'{option} over the years') 
-        st.line_chart(df.iloc[[row_index] + remaining_index].set_index(df.columns[0]).T)
+        st.subheader(f'{option} over the years')   
+        df_to_plot = df.iloc[[row_index] + remaining_index].set_index(df.columns[0]).T
+        df_to_plot.index = pd.to_datetime(df_to_plot.index, format="%b %Y")
+
+        st.line_chart(df_to_plot)
+        st.write("Median quarterly performance and latest growth percentage")
+        col1, col2 = st.columns(2) 
+        col3, col4 = st.columns(2) 
+
+        with col1 : 
+            raw_diff, perc_diff, q1_df = create_quarterly_growth(df, row_index=row_index, quarter="Mar")
+            st.metric(
+                value=round(np.median(raw_diff)), label = f"Median growth in Q1", 
+                delta = f"{perc_diff[-1]} %", border= True
+            )
+        with col2 : 
+            raw_diff, perc_diff, q2_df = create_quarterly_growth(df, row_index=row_index, quarter="Jun")
+            st.metric(
+                value=round(np.median(raw_diff)), label = f"Median growth in Q2", 
+                delta = f"{perc_diff[-1]} %", border= True
+            )
+        with col3 : 
+            raw_diff, perc_diff, q3_df = create_quarterly_growth(df, row_index=row_index, quarter="Sep")
+            st.metric(
+                value=round(np.median(raw_diff)), label = f"Median growth in Q3", 
+                delta = f"{perc_diff[-1]} %", border= True
+            )
+        with col4 : 
+            raw_diff, perc_diff, q4_df = create_quarterly_growth(df, row_index=row_index, quarter="Dec")
+            st.metric(
+                value=round(np.median(raw_diff)), label = f"Median growth in Q4", 
+                delta = f"{perc_diff[-1]} %", border= True
+            )
+
 
 
 else : 
