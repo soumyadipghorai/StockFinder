@@ -6,12 +6,16 @@ import logging
 from tqdm import tqdm
 import streamlit as st  
 import json 
+import urllib3
+
+urllib3.disable_warnings()
+
 
 class TableExtractor : 
     def __init__(self, url: str, save_files: bool = True, debug: bool = False) -> None : 
         self.url = url
         self.save_files = save_files  
-        self.debug = debug
+        self.debug = debug 
 
     def __ceate_soup(self, url: str = None) :
         site_url = self.url if not url else url 
@@ -24,7 +28,7 @@ class TableExtractor :
             'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8',
         }
 
-        site_page = requests.get(site_url, headers = headers, verify = False)
+        site_page = requests.get(site_url, headers = headers, verify = False, timeout=10)
         site_page_htmlcontent = site_page.content
         site_page_soup = BeautifulSoup(site_page_htmlcontent, 'html.parser')
 

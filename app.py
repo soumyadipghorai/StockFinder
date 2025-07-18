@@ -54,21 +54,24 @@ download_btn = st.sidebar.button('Download')
 
 # if sb_button : 
 #     all_url = {}
-#     for i in tqdm(range(1,201)) : #201 total number of pages
+#     progress_bar = st.sidebar.progress(0, text="Scrapping Latest Data...")
+#     for i in tqdm(range(101,201)) : #502 total number of pages
+#         progress_bar.progress(i-100, text="Scrapping Latest Data...")
 #         try :
 #             url = f"https://www.screener.in/screens/357649/all-listed-companies/?page={i}"
 #             obj = TableExtractor(url)
 #             res = obj._update_company_list()   
 #             all_url.update(res)  
+#             logging.info(f"page {i} successful --> {res}")
 #         except Exception as e: 
 #             st.warning(url)
 #             st.error(e)
-#             logging.info(f'issue in page num {i}')
-#         time.sleep(2)
+#             logging.info(f'issue in page num {i} --> {e}')
+#         time.sleep(30)
 
-
-#     with open("data/all_company.json", "w") as json_file:
+#     with open("data/all_company_101_200.json", "w") as json_file:
 #         json.dump(all_url, json_file)
+#     progress_bar.empty()
 
 if download_btn :
     obj = SMEStockFinder()

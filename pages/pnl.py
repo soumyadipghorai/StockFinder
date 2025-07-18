@@ -1,7 +1,9 @@
 import streamlit as st 
 import pandas as pd 
 from _temp.config import *
-from md import MAPPER
+from md import MAPPER 
+from utils.find_drop import create_quarterly_growth
+import numpy as np 
 
 try : df = pd.read_csv('data/profit_loss.csv')
 except : df = None 
@@ -18,8 +20,9 @@ if df is not None :
             label= 'select another feature', 
             options=[rem for rem in all_options if rem != option]
         ) 
+        mapper_key = option[:-1].replace('\xa0', '').strip() if option[-1] == '+' or option[-1] == '%' else option.replace('\xa0', '').strip()  
         with st.popover(label = f"Read More...", use_container_width= False) : 
-            st.markdown(MAPPER[option] if option in MAPPER else MAPPER["others"])
+            st.markdown(MAPPER[mapper_key] if mapper_key in MAPPER else MAPPER["others"])
 
     with col2 :
         row_index = df[df[df.columns[0]] == option].index[0] 
@@ -28,6 +31,33 @@ if df is not None :
         ]
         st.subheader(f'{option} over the years') 
         st.line_chart(df.iloc[[row_index] + remaining_index].set_index(df.columns[0]).T)
+        # st.write("`TTM stands for Trailing Twelve Months. It represents the financial performance of the company over the most recent 12-month period, rather than a fixed calendar or fiscal year (like Mar 2021, Mar 2020, etc.).`")
+
+        st.write("Median quarterly performance and latest growth percentage")
+        col1, col2, col3 = st.columns(3)
+
+        with col1 : 
+            kpi_row_index = df[df[df.columns[0]] == "Operating Profit"].index[0] 
+            raw_diff, perc_diff, q1_df = create_quarterly_growth(df, row_index=kpi_row_index, quarter="Mar")
+            st.metric(
+                value=round(np.median(raw_diff)), label = f"Growth in Operating Profit", 
+                delta = f"{perc_diff[-1]} %", border= True
+            )
+        with col2 : 
+            kpi_row_index = df[df[df.columns[0]] == "Profit before tax"].index[0] 
+            raw_diff, perc_diff, q2_df = create_quarterly_growth(df, row_index=kpi_row_index, quarter="Mar")
+            st.metric(
+                value=round(np.median(raw_diff)), label = f"Growth in Profit before tax", 
+                delta = f"{perc_diff[-1]} %", border= True
+            )
+        with col3 : 
+            target_col = [col for col in df[df.columns[0]] if "Net Profit" in col]  
+            kpi_row_index = df[df[df.columns[0]] == target_col[0]].index[0] 
+            raw_diff, perc_diff, q3_df = create_quarterly_growth(df, row_index=kpi_row_index, quarter="Mar")
+            st.metric(
+                value=round(np.median(raw_diff)), label = f"Growth in Net Profit", 
+                delta = f"{perc_diff[-1]} %", border= True
+            )
 else :
     st.title("Profit & Loss Statement")
     st.write("Gain insights into revenue, expenses, and profitability trends for strategic investment analysis.")

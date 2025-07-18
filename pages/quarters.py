@@ -12,6 +12,7 @@ except : df = None
 
 if df is not None : 
     all_options = [df[df.columns[0]].iloc[i] for i in range(len(df))]
+    all_options.remove('Raw PDF')
 
     col1, _, col2 = st.columns([1, 0.1, 2])
     with col1 :
@@ -23,8 +24,9 @@ if df is not None :
             label= 'select another feature', 
             options=[rem for rem in all_options if rem != option]
         ) 
+        mapper_key = option[:-1].replace('\xa0', '').strip() if option[-1] == '+' or option[-1] == '%' else option.replace('\xa0', '').strip()  
         with st.popover(label = f"Read More...", use_container_width= False) : 
-            st.markdown(MAPPER[option] if option in MAPPER else MAPPER["others"])
+            st.markdown(MAPPER[mapper_key] if mapper_key in MAPPER else MAPPER["others"])
 
     with col2 : 
         row_index = df[df[df.columns[0]] == option].index[0] 

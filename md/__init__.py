@@ -2,6 +2,7 @@ from md.cashflow import *
 from md.ratios import *
 from md.shareholder import *
 from md.balancesheet import *
+from md.pnl import *
 
 MAPPER = {
     "others" : "Google it! :)", 
@@ -13,6 +14,7 @@ MAPPER = {
     "Working Capital Days" : working_capital,
     "ROCE %" : ROCE, 
     
+    # shareholding pattern 
     "Pro" : promoter_md, 
     "FII" : FII_md, 
     "DII" : DII_md, 
@@ -36,5 +38,17 @@ MAPPER = {
     "Other Assets" : other_assets,
     "Total Assets" : total_assets, 
 
-    
+    # quarters & pnl 
+    "Sales" : sales, 
+    "Expenses" : expenses,
+    "Operating Profit" : operating_profit, 
+    "OPM" : OPM,
+    "Other Income" : other_income,
+    "Interest" : interest,
+    "Depreciation" : depreciation,
+    "Profit before tax" : PBT,
+    "Tax" : tax, 
+    "Net Profit" : net_profit, 
+    "EPS in Rs" : EPS, 
+    "Dividend Payout" : dividend_payout
 } 
