@@ -16,10 +16,12 @@ downwards = db.query(StockTrendTable).filter(StockTrendTable.trend == "Down").al
 col1, _, col2 = st.columns([1, 0.1, 1])
 with col1 : 
     st.subheader("Going Up")
-    for stock in upwards :   
-        st.success(all_company[stock.company_code]["name"])
+    for stock in upwards :  
+        if stock.company_code in all_company :  
+            st.success(all_company[stock.company_code]["name"])
 
 with col2 : 
     st.subheader("Going Down")
     for stock in downwards : 
-        st.error(all_company[stock.company_code]["name"])
+        if stock.company_code in all_company :
+            st.error(all_company[stock.company_code]["name"])

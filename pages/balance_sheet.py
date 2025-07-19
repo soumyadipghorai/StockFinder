@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd 
 from _temp.config import *
 from md import MAPPER
+import numpy as np 
+from utils.find_drop import create_quarterly_growth
 
 try : df = pd.read_csv('data/balance_sheet.csv')
 except :  df = None
@@ -30,6 +32,24 @@ if not df is None :
         ]
         st.subheader(f'{option} over the years') 
         st.line_chart(df.iloc[[row_index] + remaining_index].set_index(df.columns[0]).T)
+
+        st.write("Median quarterly performance and latest growth percentage")
+        col1, col2 = st.columns(2)
+
+        with col1 : 
+            kpi_row_index = df[df[df.columns[0]] == "Total Liabilities"].index[0] 
+            raw_diff, perc_diff, q1_df = create_quarterly_growth(df, row_index=kpi_row_index, quarter="Mar")
+            st.metric(
+                value=round(np.median(raw_diff)), label = f"Growth in Total Liabilities", 
+                delta = f"{perc_diff[-1]} %", border= True
+            )
+        with col2 : 
+            kpi_row_index = df[df[df.columns[0]] == "Total Assets"].index[0] 
+            raw_diff, perc_diff, q2_df = create_quarterly_growth(df, row_index=kpi_row_index, quarter="Mar")
+            st.metric(
+                value=round(np.median(raw_diff)), label = f"Growth in Total Assets", 
+                delta = f"{perc_diff[-1]} %", border= True
+            )
 
 else : 
     st.title("Balance Sheet")
