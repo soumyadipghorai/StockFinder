@@ -38,7 +38,7 @@ if not df is None :
         st.subheader(f'{option} over the years') 
         st.line_chart(df.iloc[[row_index] + remaining_index].set_index(df.columns[0]).T)
 
-        st.write("Median quarterly performance and latest growth percentage")
+        st.write("Median yearly performance and latest growth percentage")
         col1, col2 = st.columns(2)
 
         with col1 : 

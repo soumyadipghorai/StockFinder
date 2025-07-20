@@ -43,7 +43,7 @@ if df is not None :
         pbt_check = check_if_exist("Profit before tax", df)
         np_check = check_if_exist("Net Profit", df)
         if any([op_check, pbt_check, np_check]) :
-            st.write("Median quarterly performance and latest growth percentage")
+            st.write("Median yearly performance and latest growth percentage")
             col1, col2, col3 = st.columns([int(op_check)+0.1, int(pbt_check)+0.1, int(np_check)+0.1])
             if op_check : 
                 with col1 :   

@@ -43,7 +43,7 @@ if df is not None :
         df_to_plot.index = pd.to_datetime(df_to_plot.index, format="%b %Y")
 
         st.line_chart(df_to_plot)
-        st.write("Median quarterly performance and latest growth percentage")
+        st.write(f"Median quarterly performance and latest growth percentage of {option}")
         col1, col2 = st.columns(2) 
         col3, col4 = st.columns(2) 
 
