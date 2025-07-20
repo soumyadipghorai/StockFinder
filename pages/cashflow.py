@@ -30,8 +30,13 @@ if df is not None :
         elif "net cash" in option.lower() : mapper_key = "Net Cash Flow"
         else : mapper_key = "others"
         
-        with st.popover(label = f"Read More...", use_container_width= False) : 
-            st.markdown(MAPPER[mapper_key] if mapper_key in MAPPER else MAPPER["others"])
+        sub_col1, sub_col2 = st.columns(2) 
+        with sub_col1 :
+            with st.popover(label = f"Read More...", use_container_width= False, ) : 
+                st.markdown(MAPPER[mapper_key] if mapper_key in MAPPER else MAPPER["others"])
+        with sub_col2 : 
+            with st.popover(label = f"Preferance", use_container_width= False) : 
+                st.markdown(MAPPER["cash_flow"])
 
 
     with col2 :

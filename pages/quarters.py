@@ -24,9 +24,14 @@ if df is not None :
             label= 'select another feature', 
             options=[rem for rem in all_options if rem != option]
         ) 
-        mapper_key = option[:-1].replace('\xa0', '').strip() if option[-1] == '+' or option[-1] == '%' else option.replace('\xa0', '').strip()  
-        with st.popover(label = f"Read More...", use_container_width= False) : 
-            st.markdown(MAPPER[mapper_key] if mapper_key in MAPPER else MAPPER["others"])
+        mapper_key = option[:-1].replace('\xa0', '').strip() if option[-1] == '+' or option[-1] == '%' else option.replace('\xa0', '').strip() 
+        sub_col1, sub_col2 = st.columns(2) 
+        with sub_col1 :
+            with st.popover(label = f"Read More...", use_container_width= False, ) : 
+                st.markdown(MAPPER[mapper_key] if mapper_key in MAPPER else MAPPER["others"])
+        with sub_col2 : 
+            with st.popover(label = f"Preferance", use_container_width= False) : 
+                st.markdown(MAPPER["pnl_quarters"])
 
     with col2 : 
         row_index = df[df[df.columns[0]] == option].index[0] 

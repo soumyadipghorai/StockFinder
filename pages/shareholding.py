@@ -21,9 +21,15 @@ if df is not None :
         remaining = st.multiselect(
             label= 'select another feature', 
             options=[rem for rem in all_options if rem != option]
-        ) 
-        with st.popover(label = f"Read More...", use_container_width= False) : 
-            st.markdown(MAPPER[option[:3]] if option[:3] in MAPPER else MAPPER["others"])
+        )  
+        mapper_key = option[:-1].replace('\xa0', '').strip() if option[-1] == '+' or option[-1] == '%' else option.replace('\xa0', '').strip() 
+        sub_col1, sub_col2 = st.columns(2) 
+        with sub_col1 :
+            with st.popover(label = f"Read More...", use_container_width= False, ) : 
+                st.markdown(MAPPER[mapper_key] if mapper_key in MAPPER else MAPPER["others"])
+        with sub_col2 : 
+            with st.popover(label = f"Preferance", use_container_width= False) : 
+                st.markdown(MAPPER["sharholding_pattern"])
 
     with col2 :
         row_index = df[df[df.columns[0]] == option].index[0] 
@@ -31,14 +37,13 @@ if df is not None :
             df[df[df.columns[0]] == rem].index[0] for rem in remaining
         ]
         st.subheader(f'{option} over the years') 
-        df_to_plot = df.iloc[[row_index] + remaining_index].set_index(df.columns[0]).T
-        df_to_plot.index = pd.to_datetime(df_to_plot.index, format="%b %Y")
-
+        df_to_plot = df.iloc[[row_index] + remaining_index].set_index(df.columns[0]).T 
+        df_to_plot.index = pd.to_datetime(df_to_plot.index, format="%b %Y")  
         st.line_chart(df_to_plot)
+        
         st.write("Median quarterly performance and latest growth percentage")
         col1, col2 = st.columns(2) 
         col3, col4 = st.columns(2) 
-
         with col1 : 
             raw_diff, perc_diff, q1_df = create_quarterly_growth(df, row_index=row_index, quarter="Mar")
             st.metric(

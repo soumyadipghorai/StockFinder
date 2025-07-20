@@ -69,3 +69,31 @@ Capital employed includes both equity and debt, giving a more balanced measure o
 
 These metrics provide a clearer comparison of company performance across different capital structures.
 """
+
+ROE = """
+**Return on Equity (ROE)** measures a company’s ability to generate profits from its shareholders' equity. It's calculated as:
+
+> `ROE (%) = (Net Income / Shareholders' Equity) × 100`
+
+---
+
+### Impact on Investment Decisions:
+
+- **Profitability Indicator:** A higher ROE suggests efficient use of equity to generate profits, attracting growth-focused investors.
+- **Capital Allocation Insight:** Consistently high ROE implies strong internal capital deployment and potential for compounding returns.
+- **Management Efficiency:** Investors see ROE trends as a proxy for management performance in value creation.
+- **Risk Signal:** An unusually high ROE could indicate excessive leverage or unsustainable income sources—requiring deeper analysis.
+
+---
+
+### Using Quarterly/Yearly ROE % Charts:
+
+| Trend Type           | Interpretation                               |
+|----------------------|-----------------------------------------------|
+| 📈 Steady Increase   | Improving efficiency, good investment signal  |
+| 📉 Steady Decline    | Deteriorating performance, review fundamentals|
+| 🔁 High Volatility   | Inconsistent earnings, potential instability  |
+| ↔️ Flat Trend        | Mature business, possibly low reinvestment    |
+
+> 💡 Always compare ROE with industry peers and check equity stability to ensure reliability of trends.
+"""
