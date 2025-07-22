@@ -1,7 +1,9 @@
 dump
 database
 secret
-**/csv
+
+*.json
+*.csv
 
 *.exe
 

@@ -3,18 +3,28 @@ import logging
 import os
 import json
 from _temp.config import PAGE_CONFIG
-from utils.update_database import SMEStockFinder
-from utils.download_historical_data import download_file
-from scrapper.scrapper import TableExtractor
-from tqdm import tqdm
-import time
 st.set_page_config(**PAGE_CONFIG) 
 from models.database import get_db, engine, Base
+from utils.db_ops import FireBaseActions
+from tqdm import tqdm
+from dotenv import main
+import time
+_ = main.load_dotenv(main.find_dotenv())
+
+db_url, cred_path = os.getenv("DB_URL"), os.getenv("CRED_PATH") 
+collection_name = os.getenv("COLLECTION_NAME")
+os.makedirs("data", exist_ok=True)
+# ================================
+# pull data from firebase 
+# ================================
+if not os.path.exists('data/all_company.json'):
+    fb_obj = FireBaseActions(db_url = db_url, cred_path = cred_path)
+    fb_obj._pull(collection_name = collection_name)
 
 Base.metadata.create_all(bind=engine)
 if 'company_name' not in st.session_state : 
     if not os.path.exists('data/current_company.json'):
-        st.session_state.company_name = None
+        st.session_state.company_name = None 
     else :
         with open("data/current_company.json", "r") as json_file:
             current_company = json.load(json_file)   
@@ -53,6 +63,9 @@ sb_button = st.sidebar.button('scrape')
 download_btn = st.sidebar.button('Download')
 
 # if sb_button : 
+    # from utils.update_database import SMEStockFinder
+    # from utils.download_historical_data import download_file
+    # from scrapper.scrapper import TableExtractor
 #     all_url = {}
 #     progress_bar = st.sidebar.progress(0, text="Scrapping Latest Data...")
 #     for i in tqdm(range(201,301)) : #201 total number of pages

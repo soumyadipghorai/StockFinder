@@ -14,10 +14,10 @@ from tqdm import tqdm
 import streamlit as st
 from datetime import datetime
 
-download_dir = r"C:\Users\ghora\Downloads"
+download_dir = r"C:\Users\ghora\Downloads" 
 with open("data/all_company.json", "r") as json_file:
-    all_company = json.load(json_file)    
-
+    all_company = json.load(json_file)  
+    
 def download_file():
     service = Service(executable_path='chromedriver.exe')
     chrome_options = Options()

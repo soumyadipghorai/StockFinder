@@ -4,7 +4,7 @@ import json
 import plotly.graph_objects as go
 import pandas as pd
 import os 
-import re 
+import re  
 
 with open("data/all_company.json", "r") as json_file:
     all_company = json.load(json_file)   
@@ -12,7 +12,7 @@ with open("data/all_company.json", "r") as json_file:
 col1, _, col2 = st.columns([1, 0.2, 0.8])
 with col1 :
     st.title('Select Stock')
-    st.write(f"Select a stock out of `{len(all_company.keys())}` available stocks from the drop-down to discover key financial details and insights at your fingertips.")
+    st.write(f"Select a stock out of `{len(all_company.keys())}` available stocks from the drop-down to discover key financial details and insights at your fingertips.") 
     company_name = st.selectbox(
         label = 'enter screener URL', 
         options=[f"{all_company[key]["name"]} [{key}]" for key in all_company],
@@ -21,6 +21,7 @@ with col1 :
                 re.search(r"\[(.*?)\]", st.session_state.company_name).group(1)
             ) if st.session_state.company_name 
         else 0
+
     )
     company_code = re.search(r"\[(.*?)\]", company_name).group(1)
     sub_col1, sub_col2, _ = st.columns([1, 1, 2])
