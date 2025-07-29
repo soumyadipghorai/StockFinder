@@ -34,6 +34,25 @@ class TableExtractor :
 
         return site_page_soup
     
+    def __extract_primary_table(self, soup: str) : 
+        try :
+            company_info = soup.find('div', {'class' : 'company-info'})
+            top_ratios = company_info.find('ul', {'id' : 'top-ratios'})
+            all_values = top_ratios.find_all('li')
+            company_info_list = []
+            for li in all_values : 
+                company_info_list.append([
+                    li.find('span', {'class' : 'name'}).text.strip(),
+                    li.find('span', {'class' : 'nowrap value'}).text.strip()
+                    .replace(' ', '').replace('\n','').replace('₹', '') 
+                ])
+            company_info_df = pd.DataFrame(company_info_list, columns=['name', 'value'])
+            if self.save_files : 
+                company_info_df.to_csv('data/company_info.csv', index = False, encoding = 'utf-8')
+            return True 
+        except : 
+            return False 
+    
     def __extract_ratios(self, soup: str) : 
         try :
             ratio_section = soup.find('section', {'id' : 'ratios'})
@@ -42,7 +61,6 @@ class TableExtractor :
             ratio_df.iloc[-1, 1:] = ratio_df.iloc[-1, 1:].replace({'%': ''}, regex=True).apply(pd.to_numeric)
             ratio_df.iloc[:, 1:] = ratio_df.iloc[:, 1:].apply(pd.to_numeric)
 
-            # ratio_df.set_index(ratio_df.columns[0], inplace=True)
             if self.save_files : 
                 ratio_df.to_csv('data/ratio_table.csv', index = False, encoding = 'utf-8')
             return True 
@@ -147,6 +165,9 @@ class TableExtractor :
             balance_sheet_passed = self.__extract_balance_sheet(site_page_soup)
             quarters_passed = self.__extract_quarters(site_page_soup)
             pnl_passed = self.__extract_pnl(site_page_soup)
-            return ratio_passed and shareholding_passed and cashflow_passed and pnl_passed and balance_sheet_passed and quarters_passed
+            company_info_passed = self.__extract_primary_table(site_page_soup)
+            return ratio_passed and shareholding_passed and cashflow_passed \
+                    and pnl_passed and balance_sheet_passed and quarters_passed \
+                    and company_info_passed
         except : 
             return False 
