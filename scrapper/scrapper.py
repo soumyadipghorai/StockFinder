@@ -12,12 +12,13 @@ urllib3.disable_warnings()
 
 
 class TableExtractor : 
-    def __init__(self, url: str, save_files: bool = True, debug: bool = False) -> None : 
+    def __init__(self, url: str, save_files: bool = True, debug: bool = False, parent_directory: str = 'data') -> None : 
         self.url = url
         self.save_files = save_files  
         self.debug = debug 
+        self.parent_directory = parent_directory
 
-    def __ceate_soup(self, url: str = None) :
+    def _ceate_soup(self, url: str = None) :
         site_url = self.url if not url else url 
         headers = {
             'authority': 'scrapeme.live', 'dnt': '1', 'upgrade-insecure-requests': '1',
@@ -34,7 +35,7 @@ class TableExtractor :
 
         return site_page_soup
     
-    def __extract_primary_table(self, soup: str) : 
+    def _extract_primary_table(self, soup: str) : 
         try :
             company_info = soup.find('div', {'class' : 'company-info'})
             top_ratios = company_info.find('ul', {'id' : 'top-ratios'})
@@ -48,7 +49,7 @@ class TableExtractor :
                 ])
             company_info_df = pd.DataFrame(company_info_list, columns=['name', 'value'])
             if self.save_files : 
-                company_info_df.to_csv('data/company_info.csv', index = False, encoding = 'utf-8')
+                company_info_df.to_csv(f'{self.parent_directory}/company_info.csv', index = False, encoding = 'utf-8')
             return True 
         except : 
             return False 
@@ -62,7 +63,7 @@ class TableExtractor :
             ratio_df.iloc[:, 1:] = ratio_df.iloc[:, 1:].apply(pd.to_numeric)
 
             if self.save_files : 
-                ratio_df.to_csv('data/ratio_table.csv', index = False, encoding = 'utf-8')
+                ratio_df.to_csv(f'{self.parent_directory}/ratio_table.csv', index = False, encoding = 'utf-8')
             return True 
         except : 
             return False 
@@ -74,7 +75,7 @@ class TableExtractor :
             ratio_df = pd.read_html(ratio_table)[0] 
             ratio_df.iloc[:, 1:] = ratio_df.iloc[:, 1:].replace({'%': ''}, regex=True).apply(pd.to_numeric)
             if self.save_files : 
-                ratio_df.to_csv('data/shareholding_pattern.csv', index = False, encoding = 'utf-8')
+                ratio_df.to_csv(f'{self.parent_directory}/shareholding_pattern.csv', index = False, encoding = 'utf-8')
             return True 
         except : 
             return False
@@ -85,7 +86,7 @@ class TableExtractor :
             ratio_table = str(ratio_section.find('table'))
             ratio_df = pd.read_html(ratio_table)[0] 
             if self.save_files : 
-                ratio_df.to_csv('data/cash_flow.csv', index = False, encoding = 'utf-8')
+                ratio_df.to_csv(f'{self.parent_directory}/cash_flow.csv', index = False, encoding = 'utf-8')
             return True 
         except : 
             return False
@@ -97,7 +98,7 @@ class TableExtractor :
             ratio_df = pd.read_html(ratio_table)[0] 
             ratio_df.iloc[:, 1:] = ratio_df.iloc[:, 1:].replace({'%': ''}, regex=True).apply(pd.to_numeric)
             if self.save_files : 
-                ratio_df.to_csv('data/balance_sheet.csv', index = False, encoding = 'utf-8')
+                ratio_df.to_csv(f'{self.parent_directory}/balance_sheet.csv', index = False, encoding = 'utf-8')
             return True 
         except : 
             return False
@@ -109,7 +110,7 @@ class TableExtractor :
             ratio_df = pd.read_html(ratio_table)[0] 
             ratio_df.iloc[:, 1:] = ratio_df.iloc[:, 1:].replace({'%': ''}, regex=True).apply(pd.to_numeric)
             if self.save_files : 
-                ratio_df.to_csv('data/quarters.csv', index = False, encoding = 'utf-8')
+                ratio_df.to_csv(f'{self.parent_directory}/quarters.csv', index = False, encoding = 'utf-8')
             return True 
         except : 
             return False
@@ -121,13 +122,13 @@ class TableExtractor :
             ratio_df = pd.read_html(ratio_table)[0] 
             ratio_df.iloc[:, 1:] = ratio_df.iloc[:, 1:].replace({'%': ''}, regex=True).apply(pd.to_numeric)
             if self.save_files : 
-                ratio_df.to_csv('data/profit_loss.csv', index = False, encoding = 'utf-8')
+                ratio_df.to_csv(f'{self.parent_directory}/profit_loss.csv', index = False, encoding = 'utf-8')
             return True 
         except : 
             return False
         
     def _update_company_list(self) : 
-        site_page_soup = self.__ceate_soup() 
+        site_page_soup = self._ceate_soup() 
         company_table = site_page_soup.find('table', {'class' : 'data-table'}) 
         all_row = company_table.find_all('tr')
         all_url = {}
@@ -137,7 +138,7 @@ class TableExtractor :
                 try :
                     company_name = row.find_all('td')[1]
                     company_url = "https://www.screener.in"+company_name.find('a')['href'] 
-                    company_soup = self.__ceate_soup(company_url)
+                    company_soup = self._ceate_soup(company_url)
                     try :
                         company_links = company_soup.find('div', {'class' : 'company-links show-from-tablet-landscape'})
                         for link in company_links.find_all('span', {'class' : 'ink-700 upper'}) : 
@@ -157,7 +158,7 @@ class TableExtractor :
         return all_url 
         
     def extract_data(self) :
-        site_page_soup = self.__ceate_soup()
+        site_page_soup = self._ceate_soup()
         try :
             ratio_passed = self.__extract_ratios(site_page_soup)
             shareholding_passed = self.__extract_shareholding_pattern(site_page_soup)
@@ -165,7 +166,7 @@ class TableExtractor :
             balance_sheet_passed = self.__extract_balance_sheet(site_page_soup)
             quarters_passed = self.__extract_quarters(site_page_soup)
             pnl_passed = self.__extract_pnl(site_page_soup)
-            company_info_passed = self.__extract_primary_table(site_page_soup)
+            company_info_passed = self._extract_primary_table(site_page_soup)
             return ratio_passed and shareholding_passed and cashflow_passed \
                     and pnl_passed and balance_sheet_passed and quarters_passed \
                     and company_info_passed
