@@ -8,13 +8,11 @@ import logging
 import pandas as pd 
 import time 
 
-st.title("Top picks for the week")
-st.write("Stocks that recently moved into an `upward` or `downward` trend based on 50 and 100 days EMA")
-
 with open("data/all_company.json", "r") as json_file:
     all_company = json.load(json_file)   
 
 db = get_db()
+
 upwards = db.query(StockTrendTable).filter(StockTrendTable.trend == "Up").all()
 downwards = db.query(StockTrendTable).filter(StockTrendTable.trend == "Down").all()
 
@@ -52,45 +50,77 @@ def extract_all_info(stock_trend) :
             if not os.path.isfile(csv_path):
                 obj = TableExtractor(all_company[stock.company_code]["url"], parent_directory=f'data/{stock.company_code}')
                 if obj._extract_primary_table(obj._ceate_soup()) :
-                    mapper[stock.company_code] = return_company_KPI(
-                        company_code=stock.company_code, performance_metric='company_info'
-                    )
-                    time.sleep(5)
-                if not obj.extract_data() : 
-                    logging.info(f" failed to extract for {stock.company_code}") 
-    
+                    time.sleep(5) 
+                else : 
+                    logging.info(f"failed to access {stock.company_code}")
+            mapper[stock.company_code] = return_company_KPI(
+                company_code=stock.company_code, performance_metric='company_info'
+            )
+                
     return mapper 
 
-def view_top_stock_list(company_tren) : 
-    counter = 1
-    for stock in company_tren :  
-        if stock.company_code in all_company :  
-            with st.expander(f'{counter}.{all_company[stock.company_code]["name"]}'):  
-                st.write(f'Do you want to check performance of {all_company[stock.company_code]["name"]}?')
-                check_btn = st.button('Check', key = stock.company_code)
-                st.write(
-                    upward_mapper[stock.company_code] if company_tren == upwards 
-                    else downward_mapper[stock.company_code]
-                )
+def view_top_stock_list(company_trend, sort_value: str = "market_cap", trend_type="down") : 
+    counter = 1 
+    filter_company_with_kpi = [
+        (
+            upward_mapper[stock.company_code][sort_value] if trend_type == "up" \
+            else downward_mapper[stock.company_code][sort_value] , 
+            stock.company_code
+        ) for stock in company_trend
+        if stock.company_code in all_company 
+    ]  
+    filter_company_with_kpi = sorted(filter_company_with_kpi, key=lambda x: (x[0], x[1]))
+    for _, company_code in filter_company_with_kpi :  
+        if company_code in all_company :  
+            with st.expander(f'{counter}.{all_company[company_code]["name"]}'):  
+                st.write(f'Do you want to check performance of {all_company[company_code]["name"]}?')
+                check_btn = st.button('Check', key = company_code) 
+                total = len(upward_mapper[company_code].keys()) \
+                    if trend_type == 'up' else len(downward_mapper[company_code].keys())
+                counter = 1
+                sub_col1, sub_col2 = st.columns(2)
+                for key, val in (
+                    upward_mapper[company_code].items() if trend_type == 'up' 
+                    else downward_mapper[company_code].items()
+                ) :
+                    if counter <= total//2 : 
+                        with sub_col1 : 
+                            st.write(key, f" : `{val}`")  
+                    else : 
+                        with sub_col2 : 
+                            st.write(key, f" : `{val}`")  
+                    counter += 1 
                 if check_btn :
-                    company_name = f"{all_company[stock.company_code]["name"]} [{stock.company_code}]"
+                    company_name = f"{all_company[company_code]["name"]} [{company_code}]"
                     st.session_state.company_name = company_name 
                     with open('data/current_company.json', 'w') as f:
                         json.dump({"name" : company_name}, f, indent=4)
 
-                    obj = TableExtractor(all_company[stock.company_code]["url"])
+                    obj = TableExtractor(all_company[company_code]["url"])
                     if obj.extract_data() : 
                         st.toast('Successfully extracted all the tables...')
             counter += 1
         
 upward_mapper = extract_all_info(upwards)
 downward_mapper = extract_all_info(downwards)
-            
+
+# ========================================
+#               Page Layout              #
+# ========================================
+st.title("Top picks for the week")
+st.write("Stocks that recently moved into an `upward` or `downward` trend based on 50 and 100 days EMA")
+
+options = ["market_cap", "current_price", "PE", "book_value", "face_value", "ROCE", "ROE",]
+sort_options = st.pills(
+    "Sort companies based on the following : ", options=options, selection_mode="single",
+    default = options[0]
+)
+
 col1, _, col2 = st.columns([1, 0.1, 1])
 with col1 : 
     st.subheader("Going Up")
-    view_top_stock_list(upwards)
+    view_top_stock_list(upwards, trend_type = "up", sort_value = sort_options)
 
 with col2 : 
     st.subheader("Going Down")
-    view_top_stock_list(downwards)
+    view_top_stock_list(downwards, sort_value = sort_options)
