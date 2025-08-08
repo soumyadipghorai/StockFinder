@@ -39,9 +39,11 @@ def return_company_KPI(company_code, performance_metric: str = 'company_info') :
         "book_value" : book_value, "face_value" : face_value, "ROCE" : ROCE, "ROE" : ROE
     }
 
-def extract_all_info(stock_trend) : 
-    mapper = {}
+def extract_all_info(stock_trend, trend_type: str = 'up') : 
+    total, counter, mapper = len(stock_trend), 1, {}
+    progress_bar = st.progress(0, text=f"Gathering stocks that are going {trend_type}...")
     for stock in stock_trend : 
+        progress_bar.progress(int((counter/total)*100), text=f"Gathering stocks that are going {trend_type}...") 
         if stock.company_code in all_company :  
             dir_path = f"data/{stock.company_code}"
             csv_path = os.path.join(dir_path, "company_info.csv")
@@ -56,7 +58,9 @@ def extract_all_info(stock_trend) :
             mapper[stock.company_code] = return_company_KPI(
                 company_code=stock.company_code, performance_metric='company_info'
             )
-                
+        counter += 1
+    progress_bar.empty()
+    st.toast(f'Successfully gathered stocks that are going {trend_type}!')
     return mapper 
 
 def view_top_stock_list(company_trend, sort_value: str = "market_cap", trend_type="down") : 
@@ -84,10 +88,10 @@ def view_top_stock_list(company_trend, sort_value: str = "market_cap", trend_typ
                     else downward_mapper[company_code].items()
                 ) :
                     if counter <= total//2 : 
-                        with sub_col1 : 
+                        with sub_col2 : 
                             st.write(key, f" : `{val}`")  
                     else : 
-                        with sub_col2 : 
+                        with sub_col1 : 
                             st.write(key, f" : `{val}`")  
                     counter += 1 
                 if check_btn :
@@ -102,7 +106,7 @@ def view_top_stock_list(company_trend, sort_value: str = "market_cap", trend_typ
             counter += 1
         
 upward_mapper = extract_all_info(upwards)
-downward_mapper = extract_all_info(downwards)
+downward_mapper = extract_all_info(downwards, trend_type='down')
 
 # ========================================
 #               Page Layout              #

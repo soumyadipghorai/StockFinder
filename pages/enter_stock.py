@@ -1,9 +1,6 @@
 import streamlit as st 
 from scrapper import TableExtractor 
-import json
-import plotly.graph_objects as go
-import pandas as pd
-import os 
+import json 
 import re  
 
 with open("data/all_company.json", "r") as json_file:
