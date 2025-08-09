@@ -9,6 +9,7 @@ from utils.db_ops import FireBaseActions
 from tqdm import tqdm
 from dotenv import main
 import time
+from utils.download_historical_data import download_file
 _ = main.load_dotenv(main.find_dotenv())
 
 db_url, cred_path = os.getenv("DB_URL"), os.getenv("CRED_PATH") 
@@ -86,10 +87,10 @@ download_btn = st.sidebar.button('Download')
 #         json.dump(all_url, json_file)
 #     progress_bar.empty()
 
-# if download_btn :
-#     obj = SMEStockFinder()
-#     obj.update()
-    # download_file()
+if download_btn :
+    # obj = SMEStockFinder()
+    # obj.update()
+    download_file()
 
 if __name__ == "__main__" : 
     pg.run()

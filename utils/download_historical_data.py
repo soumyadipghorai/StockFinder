@@ -42,7 +42,7 @@ def download_file():
             input_field.send_keys(Keys.CONTROL + 'a') 
             input_field.send_keys(Keys.DELETE)
             
-            time.sleep(0.5)
+            time.sleep(5)
             input_field.send_keys(company)
 
             dropdown_option = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.tt-suggestion.tt-selectable")))
@@ -62,29 +62,28 @@ def download_file():
 
             today = datetime.today()
             day_today = today.day
-            month_today = today.month
+            month_today = str(today.month).zfill(2)
             year_today = today.year
 
             file_name = f"{day_today}-{month_today}-{year_today-1}-TO-{day_today}-{month_today}-{year_today}-{company}-ALL-N.csv"  # File to be moved
-
             destination_folder =  "./dump"
             destination_path = os.path.join(destination_folder, file_name)
 
             source_path = os.path.join(download_dir, file_name)
-            
+            # print(source_path)
             try: 
                 if os.path.exists(source_path): 
                     shutil.move(source_path, destination_path)
-                    logging.info(f"File moved to: {destination_path}")
+                    print(f"File moved to: {destination_path}")
                 else:
-                    logging.info("File not found in Downloads folder.")
+                    print("File not found in Downloads folder.")
             except Exception as e:
                 logging.error(f"An error occurred: {e}")
 
         except Exception as e : 
             st.error(e)
             
-        time.sleep(2)
+        time.sleep(5)
         
 
     return True 

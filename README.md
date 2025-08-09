@@ -3,7 +3,7 @@
 **Stock Finder** is a powerful and intuitive stock analysis tool built with **Python** and **Streamlit**. It enables users to fetch the latest financial data, visualize key performance indicators (KPIs), and get intelligent stock recommendations — all in one interactive dashboard.
 
 <img src='assets/quarterly_performance.png' alt="run project" style="width:100%"/>
-
+<!-- https://storage.googleapis.com/chrome-for-testing-public/139.0.7258.66/win64/chromedriver-win64.zip -->
 ---
 
 ## 🚀 Features
