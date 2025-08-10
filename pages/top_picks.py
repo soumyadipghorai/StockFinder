@@ -11,10 +11,9 @@ import time
 with open("data/all_company.json", "r") as json_file:
     all_company = json.load(json_file)   
 
-db = get_db()
+with open("data/current_trend.json", "r") as json_file:
+    current_trend = json.load(json_file)   
 
-upwards = db.query(StockTrendTable).filter(StockTrendTable.trend == "Up").all()
-downwards = db.query(StockTrendTable).filter(StockTrendTable.trend == "Down").all()
 
 def return_company_KPI(company_code, performance_metric: str = 'company_info') : 
     df = pd.read_csv(f'data/{company_code}/{performance_metric}.csv') 
@@ -36,7 +35,9 @@ def return_company_KPI(company_code, performance_metric: str = 'company_info') :
 
     return {
         "market_cap" : market_cap, "current_price": curr_price, "PE" : PE, 
-        "book_value" : book_value, "face_value" : face_value, "ROCE" : ROCE, "ROE" : ROE
+        "book_value" : book_value, "face_value" : face_value, "ROCE" : ROCE, "ROE" : ROE, 
+        "change_counter" : current_trend[company_code]["change_counter"], 
+        "last_detected_change" : current_trend[company_code]["last_detected_change"]
     }
 
 def extract_all_info(stock_trend, trend_type: str = 'up') : 
@@ -44,19 +45,19 @@ def extract_all_info(stock_trend, trend_type: str = 'up') :
     progress_bar = st.progress(0, text=f"Gathering stocks that are going {trend_type}...")
     for stock in stock_trend : 
         progress_bar.progress(int((counter/total)*100), text=f"Gathering stocks that are going {trend_type}...") 
-        if stock.company_code in all_company :  
-            dir_path = f"data/{stock.company_code}"
+        if stock in all_company :  
+            dir_path = f"data/{stock}"
             csv_path = os.path.join(dir_path, "company_info.csv")
             if not os.path.exists(dir_path):
                 os.makedirs(dir_path)
             if not os.path.isfile(csv_path):
-                obj = TableExtractor(all_company[stock.company_code]["url"], parent_directory=f'data/{stock.company_code}')
+                obj = TableExtractor(all_company[stock]["url"], parent_directory=f'data/{stock}')
                 if obj._extract_primary_table(obj._ceate_soup()) :
                     time.sleep(5) 
                 else : 
-                    logging.info(f"failed to access {stock.company_code}")
-            mapper[stock.company_code] = return_company_KPI(
-                company_code=stock.company_code, performance_metric='company_info'
+                    logging.info(f"failed to access {stock}")
+            mapper[stock] = return_company_KPI(
+                company_code=stock, performance_metric='company_info'
             )
         counter += 1
     progress_bar.empty()
@@ -67,11 +68,11 @@ def view_top_stock_list(company_trend, sort_value: str = "market_cap", trend_typ
     counter = 1 
     filter_company_with_kpi = [
         (
-            upward_mapper[stock.company_code][sort_value] if trend_type == "up" \
-            else downward_mapper[stock.company_code][sort_value] , 
-            stock.company_code
+            upward_mapper[stock][sort_value] if trend_type == "up" \
+            else downward_mapper[stock][sort_value] , 
+            stock
         ) for stock in company_trend
-        if stock.company_code in all_company 
+        if stock in all_company 
     ]  
     filter_company_with_kpi = sorted(filter_company_with_kpi, key=lambda x: (x[0], x[1]))
     for _, company_code in filter_company_with_kpi :  
@@ -105,6 +106,8 @@ def view_top_stock_list(company_trend, sort_value: str = "market_cap", trend_typ
                         st.toast('Successfully extracted all the tables...')
             counter += 1
         
+upwards = [company for company in current_trend if current_trend[company]["trend"] == "Up"]
+downwards = [company for company in current_trend if current_trend[company]["trend"] == "Down"]
 upward_mapper = extract_all_info(upwards)
 downward_mapper = extract_all_info(downwards, trend_type='down')
 

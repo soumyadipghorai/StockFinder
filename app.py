@@ -4,25 +4,33 @@ import os
 import json
 from _temp.config import PAGE_CONFIG
 st.set_page_config(**PAGE_CONFIG) 
-from models.database import get_db, engine, Base
+# from models.database import get_db, engine, Base
 from utils.db_ops import FireBaseActions
 from tqdm import tqdm
 from dotenv import main
 import time
 from utils.download_historical_data import download_file
+from utils.update_database import SMEStockFinder
 _ = main.load_dotenv(main.find_dotenv())
 
 db_url, cred_path = os.getenv("DB_URL"), os.getenv("CRED_PATH") 
-collection_name = os.getenv("COLLECTION_NAME")
+collection_name = os.getenv("ALL_COMPANY_COLLECTION_NAME")
+current_trend_collection_name = os.getenv("CURRENT_TREND_COLLECTION_NAME")
 os.makedirs("data", exist_ok=True)
 # ================================
 # pull data from firebase 
-# ================================
+# ================================ 
+fb_obj = FireBaseActions(db_url = db_url, cred_path = cred_path)
 if not os.path.exists('data/all_company.json'):
-    fb_obj = FireBaseActions(db_url = db_url, cred_path = cred_path)
     fb_obj._pull(collection_name = collection_name)
 
-Base.metadata.create_all(bind=engine)
+if not os.path.exists('data/current_trend.json'): 
+    fb_obj._pull(
+        collection_name = current_trend_collection_name, 
+        store_path='data/current_trend.json'
+    )
+
+# Base.metadata.create_all(bind=engine)
 if 'company_name' not in st.session_state : 
     if not os.path.exists('data/current_company.json'):
         st.session_state.company_name = None 
@@ -88,9 +96,9 @@ download_btn = st.sidebar.button('Download')
 #     progress_bar.empty()
 
 if download_btn :
-    # obj = SMEStockFinder()
-    # obj.update()
-    download_file()
+    obj = SMEStockFinder()
+    obj.generate_trend_reversal()
+    # download_file(start_from = 'ZENSARTECH')
 
 if __name__ == "__main__" : 
     pg.run()
