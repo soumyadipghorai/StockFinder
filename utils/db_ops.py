@@ -27,11 +27,11 @@ class FireBaseActions :
         ref = db.reference(collection_name)
         try :
             ref.push(self.all_company)
+            print("="*40)
+            print("|| pushed data to firebase db")
+            print("="*40)
         except Exception as e : 
             print(e)
-        print("="*40)
-        print("|| pushed data to firebase db")
-        print("="*40)
 
     def _pull(self, collection_name: str, store_path: str = "data/all_company.json") -> None :
         ref = db.reference(collection_name)

@@ -50,6 +50,12 @@ if not os.path.exists('data/current_trend.json'):
         store_path='data/current_trend.json'
     )
 
+if not os.path.exists('data/current_trend_info.json'): 
+    fb_obj._pull(
+        collection_name = current_trend_info_collection_name, 
+        store_path='data/current_trend_info.json'
+    )
+
 if 'company_name' not in st.session_state : 
     if not os.path.exists('data/current_company.json'):
         st.session_state.company_name = None 
@@ -77,12 +83,10 @@ cash_flow_page = st.Page("pages/cashflow.py", title = "Cash flow", icon = ":mate
 balance_sheet_page = st.Page("pages/balance_sheet.py", title = "balance Sheet", icon = ":material/account_balance:")
 quarters_page = st.Page("pages/quarters.py", title = "Quarterly results", icon = ":material/trending_up:")
 pnl_page = st.Page("pages/pnl.py", title = "Profit & Loss", icon = ":material/currency_exchange:")
-# top_picks_page = st.Page("pages/top_picks.py", title = "Top Picks", icon = ":material/local_fire_department:")
+top_picks_page = st.Page("pages/top_picks.py", title = "Top Picks", icon = ":material/local_fire_department:")
 
 pg = st.navigation([
-    select_stock_page, 
-    # top_picks_page, 
-    screener_ratios_page, shareholding_pattern_page, cash_flow_page, 
+    select_stock_page, top_picks_page, screener_ratios_page, shareholding_pattern_page, cash_flow_page, 
     balance_sheet_page, quarters_page, pnl_page, readme_page
 ])
 
