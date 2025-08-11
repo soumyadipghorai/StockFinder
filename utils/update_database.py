@@ -1,6 +1,4 @@
-from utils.download_historical_data import download_file
-from models.database import  get_db, Base
-from models.db_ops import DBOps, StockTrendTable
+from utils.download_historical_data import download_file 
 from sqlalchemy import create_engine, inspect, Column, Integer, String, Float, MetaData, Table 
 import os
 from _temp.config import COLUMN_MAPPING
@@ -85,28 +83,3 @@ class SMEStockFinder :
         with open('data/current_trend.json', 'w') as f:
             json.dump(mapper, f, indent=4)
         
-    def update(self) : 
-        all_files = self.__get_all_files()
-        for file_path in all_files : 
-            try :
-                df = pd.read_csv('dump/'+file_path)
-                table_name = df['Symbol  '].iloc[0]
-                df = df[list(COLUMN_MAPPING.keys())].rename(columns=COLUMN_MAPPING)
-                trend, trend_reversal = self.__find_trend(df.copy(), window_size= self.window_size)
-                company_details = self.db.query(StockTrendTable).filter(StockTrendTable.company_code == table_name).first()
-
-                if company_details : 
-                    company_details.trend, company_details.reverse_started = trend, trend_reversal
-                else : 
-                    new_entry = StockTrendTable( 
-                        company_code = table_name, trend = trend, reverse_started = trend_reversal
-                    ) 
-                    self.db.add(new_entry)
-            
-                self.db.commit()
-
-                df = df[COLUMN_MAPPING.values()]
-                _ = self.check_and_create_table(table_name=table_name) 
-                df.to_sql(table_name, con=self.db.get_bind(), if_exists='append', index=False)
-            except Exception as e : 
-                logging.error(e)

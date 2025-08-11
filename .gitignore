@@ -1,11 +1,12 @@
 dump
 database
 secret
-
+logs
 *.json
 *.csv
 
 *.exe
+
 
 __pycache__
 **/__pycache__/

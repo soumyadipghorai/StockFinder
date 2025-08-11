@@ -1,6 +1,4 @@
 import streamlit as st
-from models.database import get_db
-from models.db_ops import StockTrendTable
 import json
 from scrapper import TableExtractor
 import os 
