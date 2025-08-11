@@ -7,6 +7,7 @@ st.set_page_config(**PAGE_CONFIG)
 from utils.db_ops import FireBaseActions
 from tqdm import tqdm
 from dotenv import main
+from components.footer import footer
 import time
 from utils.download_historical_data import download_file
 from utils.update_database import SMEStockFinder
@@ -113,6 +114,7 @@ download_btn = st.sidebar.button('Download')
 #     obj = SMEStockFinder()
 #     obj.generate_trend_reversal()
     # download_file(start_from = 'ZENSARTECH')
+st.markdown(footer, unsafe_allow_html=True)
 
 if __name__ == "__main__" : 
     pg.run()
