@@ -38,7 +38,6 @@ os.makedirs("data", exist_ok=True)
 # pull data from firebase 
 # ================================ 
 fb_obj = FireBaseActions(db_url = db_url, cred_path = cred_dict)
-fb_obj._push(collection_name = current_trend_info_collection_name, data_path='data/current_trend_info.json')
 if not os.path.exists('data/all_company.json'):
     fb_obj._pull(
         collection_name = collection_name, 
@@ -49,12 +48,6 @@ if not os.path.exists('data/current_trend.json'):
     fb_obj._pull(
         collection_name = current_trend_collection_name, 
         store_path='data/current_trend.json'
-    )
-
-if not os.path.exists('data/current_trend_info.json'): 
-    fb_obj._pull(
-        collection_name = current_trend_info_collection_name, 
-        store_path='data/current_trend_info.json'
     )
 
 if 'company_name' not in st.session_state : 
