@@ -8,18 +8,34 @@ from utils.db_ops import FireBaseActions
 from tqdm import tqdm
 from dotenv import main
 import time
-from utils.download_historical_data import appdownload_file
+from utils.download_historical_data import download_file
 from utils.update_database import SMEStockFinder
 _ = main.load_dotenv(main.find_dotenv())
 
 db_url, cred_path = os.getenv("DB_URL"), os.getenv("CRED_PATH") 
 collection_name = os.getenv("ALL_COMPANY_COLLECTION_NAME")
 current_trend_collection_name = os.getenv("CURRENT_TREND_COLLECTION_NAME")
+
+cred_dict = {
+    "type": os.getenv("TYPE"),
+    "project_id": os.getenv("PROJECT_ID"),
+    "private_key_id": os.getenv("PRIVATE_KEY_ID"),
+    "private_key": os.getenv("PRIVATE_KEY").replace("\\n", "\n"),  # convert \n back to real newlines
+    "client_email": os.getenv("CLIENT_EMAIL"),
+    "client_id": os.getenv("CLIENT_ID"),
+    "auth_uri": os.getenv("AUTH_URI"),
+    "token_uri": os.getenv("TOKEN_URI"),
+    "auth_provider_x509_cert_url": os.getenv("AUTH_PROVIDER_X509_CERT_URL"),
+    "client_x509_cert_url": os.getenv("CLIENT_X509_CERT_URL"),
+    "universe_domain": os.getenv("UNIVERSE_DOMAIN"),
+}
+
+
 os.makedirs("data", exist_ok=True)
 # ================================
 # pull data from firebase 
 # ================================ 
-fb_obj = FireBaseActions(db_url = db_url, cred_path = cred_path)
+fb_obj = FireBaseActions(db_url = db_url, cred_path = cred_dict)
 if not os.path.exists('data/all_company.json'):
     fb_obj._pull(collection_name = collection_name)
 
