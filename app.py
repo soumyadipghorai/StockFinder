@@ -58,9 +58,6 @@ if 'company_name' not in st.session_state :
             current_company = json.load(json_file)   
             st.session_state.company_name = current_company['name']
 
-with open("data/current_trend_info.json", "r") as json_file:
-    jf = json.load(json_file)
-# st.write(jf)
 log_folder = 'logs'
 if not os.path.exists(log_folder):
     os.makedirs(log_folder)
