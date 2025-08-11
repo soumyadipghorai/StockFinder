@@ -16,6 +16,7 @@ _ = main.load_dotenv(main.find_dotenv())
 db_url, cred_path = os.getenv("DB_URL"), os.getenv("CRED_PATH") 
 collection_name = os.getenv("ALL_COMPANY_COLLECTION_NAME")
 current_trend_collection_name = os.getenv("CURRENT_TREND_COLLECTION_NAME")
+current_trend_info_collection_name = os.getenv("CURRENT_TREND_INFO_COLLECTION_NAME")
 
 cred_dict = {
     "type": os.getenv("TYPE"),
@@ -37,13 +38,23 @@ os.makedirs("data", exist_ok=True)
 # pull data from firebase 
 # ================================ 
 fb_obj = FireBaseActions(db_url = db_url, cred_path = cred_dict)
+fb_obj._push(collection_name = current_trend_info_collection_name, data_path='data/current_trend_info.json')
 if not os.path.exists('data/all_company.json'):
-    fb_obj._pull(collection_name = collection_name)
+    fb_obj._pull(
+        collection_name = collection_name, 
+        store_path= 'data/all_company.json'
+    )
 
 if not os.path.exists('data/current_trend.json'): 
     fb_obj._pull(
         collection_name = current_trend_collection_name, 
         store_path='data/current_trend.json'
+    )
+
+if not os.path.exists('data/current_trend_info.json'): 
+    fb_obj._pull(
+        collection_name = current_trend_info_collection_name, 
+        store_path='data/current_trend_info.json'
     )
 
 if 'company_name' not in st.session_state : 
@@ -54,6 +65,9 @@ if 'company_name' not in st.session_state :
             current_company = json.load(json_file)   
             st.session_state.company_name = current_company['name']
 
+with open("data/current_trend_info.json", "r") as json_file:
+    jf = json.load(json_file)
+# st.write(jf)
 log_folder = 'logs'
 if not os.path.exists(log_folder):
     os.makedirs(log_folder)
@@ -73,10 +87,12 @@ cash_flow_page = st.Page("pages/cashflow.py", title = "Cash flow", icon = ":mate
 balance_sheet_page = st.Page("pages/balance_sheet.py", title = "balance Sheet", icon = ":material/account_balance:")
 quarters_page = st.Page("pages/quarters.py", title = "Quarterly results", icon = ":material/trending_up:")
 pnl_page = st.Page("pages/pnl.py", title = "Profit & Loss", icon = ":material/currency_exchange:")
-top_picks_page = st.Page("pages/top_picks.py", title = "Top Picks", icon = ":material/local_fire_department:")
+# top_picks_page = st.Page("pages/top_picks.py", title = "Top Picks", icon = ":material/local_fire_department:")
 
 pg = st.navigation([
-    select_stock_page, top_picks_page, screener_ratios_page, shareholding_pattern_page, cash_flow_page, 
+    select_stock_page, 
+    # top_picks_page, 
+    screener_ratios_page, shareholding_pattern_page, cash_flow_page, 
     balance_sheet_page, quarters_page, pnl_page, readme_page
 ])
 

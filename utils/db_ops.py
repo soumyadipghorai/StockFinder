@@ -2,6 +2,9 @@ import firebase_admin
 from firebase_admin import credentials, db
 import json
 import argparse
+import numpy as np
+import pandas as pd 
+
 
 class FireBaseActions : 
     def __init__(self, db_url: str, cred_path: str) -> None :
@@ -22,7 +25,10 @@ class FireBaseActions :
     def _push(self, collection_name: str, data_path: str) -> None : 
         self.__load_data(data_path)
         ref = db.reference(collection_name)
-        ref.push(self.all_company)
+        try :
+            ref.push(self.all_company)
+        except Exception as e : 
+            print(e)
         print("="*40)
         print("|| pushed data to firebase db")
         print("="*40)
