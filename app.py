@@ -8,7 +8,7 @@ from utils.db_ops import FireBaseActions
 from tqdm import tqdm
 from dotenv import main
 import time
-from utils.download_historical_data import download_file
+from utils.download_historical_data import appdownload_file
 from utils.update_database import SMEStockFinder
 _ = main.load_dotenv(main.find_dotenv())
 
