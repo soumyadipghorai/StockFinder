@@ -3,8 +3,7 @@ import logging
 import os
 import json
 from _temp.config import PAGE_CONFIG
-st.set_page_config(**PAGE_CONFIG) 
-# from models.database import get_db, engine, Base
+st.set_page_config(**PAGE_CONFIG)  
 from utils.db_ops import FireBaseActions
 from tqdm import tqdm
 from dotenv import main
@@ -30,7 +29,6 @@ if not os.path.exists('data/current_trend.json'):
         store_path='data/current_trend.json'
     )
 
-# Base.metadata.create_all(bind=engine)
 if 'company_name' not in st.session_state : 
     if not os.path.exists('data/current_company.json'):
         st.session_state.company_name = None 
@@ -95,9 +93,9 @@ download_btn = st.sidebar.button('Download')
 #         json.dump(all_url, json_file)
 #     progress_bar.empty()
 
-if download_btn :
-    obj = SMEStockFinder()
-    obj.generate_trend_reversal()
+# if download_btn :
+#     obj = SMEStockFinder()
+#     obj.generate_trend_reversal()
     # download_file(start_from = 'ZENSARTECH')
 
 if __name__ == "__main__" : 

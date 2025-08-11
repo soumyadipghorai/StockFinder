@@ -68,14 +68,16 @@ def view_top_stock_list(company_trend, sort_value: str = "market_cap", trend_typ
     counter = 1 
     filter_company_with_kpi = [
         (
-            upward_mapper[stock][sort_value] if trend_type == "up" \
-            else downward_mapper[stock][sort_value] , 
-            stock
+            tuple(
+                upward_mapper[stock][val] if trend_type == "up" \
+                else downward_mapper[stock][val] for val in sort_value
+            ) + (stock,)
         ) for stock in company_trend
         if stock in all_company 
     ]  
-    filter_company_with_kpi = sorted(filter_company_with_kpi, key=lambda x: (x[0], x[1]))
-    for _, company_code in filter_company_with_kpi :  
+    filter_company_with_kpi = sorted(filter_company_with_kpi, key=lambda x: tuple(x))
+    for val in filter_company_with_kpi :  
+        company_code = val[-1]
         if company_code in all_company :  
             with st.expander(f'{counter}.{all_company[company_code]["name"]}'):  
                 st.write(f'Do you want to check performance of {all_company[company_code]["name"]}?')
@@ -117,17 +119,17 @@ downward_mapper = extract_all_info(downwards, trend_type='down')
 st.title("Top picks for the week")
 st.write("Stocks that recently moved into an `upward` or `downward` trend based on 50 and 100 days EMA")
 
-options = ["market_cap", "current_price", "PE", "book_value", "face_value", "ROCE", "ROE",]
+options = ["market_cap", "current_price", "PE", "book_value", "face_value", "ROCE", "ROE", "last_detected_change"]
 sort_options = st.pills(
-    "Sort companies based on the following : ", options=options, selection_mode="single",
+    "Sort companies based on the following : ", options=options, selection_mode="multi",
     default = options[0]
 )
 
 col1, _, col2 = st.columns([1, 0.1, 1])
 with col1 : 
     st.subheader("Going Up")
-    view_top_stock_list(upwards, trend_type = "up", sort_value = sort_options)
+    view_top_stock_list(upwards, trend_type = "up", sort_value=sort_options)
 
 with col2 : 
     st.subheader("Going Down")
-    view_top_stock_list(downwards, sort_value = sort_options)
+    view_top_stock_list(downwards, sort_value=sort_options)
