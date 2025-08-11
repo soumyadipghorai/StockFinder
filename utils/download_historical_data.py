@@ -15,9 +15,11 @@ import streamlit as st
 from datetime import datetime
 
 download_dir = r"C:\Users\ghora\Downloads" 
-with open("data/all_company.json", "r") as json_file:
-    all_company = json.load(json_file)  
-    
+try :
+    with open("data/all_company.json", "r") as json_file:
+        all_company = json.load(json_file)  
+except : all_company = None
+
 def download_file(start_from: str = 'COMPANY_NAME'):
     service = Service(executable_path='chromedriver.exe')
     chrome_options = Options()

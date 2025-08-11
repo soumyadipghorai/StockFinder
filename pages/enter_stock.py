@@ -12,7 +12,7 @@ with col1 :
     st.write(f"Select a stock out of `{len(all_company.keys())}` available stocks from the drop-down to discover key financial details and insights at your fingertips.") 
     company_name = st.selectbox(
         label = 'enter screener URL', 
-        options=[f"{all_company[key]["name"]} [{key}]" for key in all_company],
+        options=[f'{all_company[key]["name"]} [{key}]' for key in all_company],
         index= [key for key in all_company]
             .index(
                 re.search(r"\[(.*?)\]", st.session_state.company_name).group(1)

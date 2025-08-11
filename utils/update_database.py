@@ -1,12 +1,9 @@
-from utils.download_historical_data import download_file 
-from sqlalchemy import create_engine, inspect, Column, Integer, String, Float, MetaData, Table 
 import os
 from _temp.config import COLUMN_MAPPING
 import pandas as pd 
 import logging
 import streamlit as st 
-import json
-from tqdm import tqdm
+import json 
 
 class SMEStockFinder : 
     def __init__(self, window_size: int = 30, dump_file_path: str = './dump', store_file_path: str = './data') : 

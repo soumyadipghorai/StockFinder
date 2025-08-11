@@ -74,35 +74,35 @@ if df is not None :
             if debtor_days_res :
                 st.metric(
                     label="Debtor Days trend", value=round(debtor_days_res["corr"], 2), 
-                    delta=f"{"+" if debtor_days_res["direction"] == "Upward" else "-"} {debtor_days_res["strength"]}", 
+                    delta=f'{"+" if debtor_days_res["direction"] == "Upward" else "-"} {debtor_days_res["strength"]}', 
                     border= True
                 )
         with col2 : 
             if inventory_days_res :
                 st.metric(
                     label="Inventory Days trend", value=round(inventory_days_res["corr"], 2), 
-                    delta=f"{"+" if inventory_days_res["direction"] == "Upward" else "-"} {inventory_days_res["strength"]}", 
+                    delta=f'{"+" if inventory_days_res["direction"] == "Upward" else "-"} {inventory_days_res["strength"]}', 
                     border= True
                 )
         with col3 : 
             if days_payable_res :
                 st.metric(
                     label="Days Payable", value=round(days_payable_res["corr"], 2), 
-                    delta=f"{"+" if days_payable_res["direction"] == "Upward" else "-"} {days_payable_res["strength"]}", 
+                    delta=f'{"+" if days_payable_res["direction"] == "Upward" else "-"} {days_payable_res["strength"]}', 
                     border= True
                 )
         with col4 :  
             if wc_res :
                 st.metric(
                     label="Working Capital Days", value=round(wc_res["corr"], 2), 
-                    delta=f"{"+" if wc_res["direction"] == "Upward" else "-"} {wc_res["strength"]}", 
+                    delta=f'{"+" if wc_res["direction"] == "Upward" else "-"} {wc_res["strength"]}', 
                     border= True
                 )
         with col5 : 
             if ccc_res :
                 st.metric(
                     label="Cash Conversion Cycle", value=round(ccc_res["corr"], 2), 
-                    delta=f"{"+" if ccc_res["direction"] == "Upward" else "-"} {ccc_res["strength"]}", 
+                    delta=f'{"+" if ccc_res["direction"] == "Upward" else "-"} {ccc_res["strength"]}', 
                     border= True
                 )
 

@@ -59,7 +59,7 @@ if df is not None :
             condition = round((interest_rate * max(total_debt, abs(total_finance))/100), 2) < df.iloc[0][-1] 
             st.metric(
                 value="Yes" if condition else "No", label= 'Sustainable', 
-                delta= f"{'+ Can' if condition else "- Can't"} Sustain tax",
+                delta= f'{"+ Can" if condition else "- Can not"} Sustain tax',
                 border= True
             )
         with col3 : 
