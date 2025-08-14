@@ -5,6 +5,7 @@ import os
 import logging
 import pandas as pd 
 import time 
+from md import MAPPER
 
 with open("data/all_company.json", "r") as json_file:
     all_company = json.load(json_file)   
@@ -120,7 +121,7 @@ def extract_all_info(stock_trend, trend_type: str = 'up') :
             mapper[stock] = return_company_KPI(company_code=stock)
         counter += 1
     progress_bar.empty()
-    st.toast(f'Successfully gathered stocks that are going {trend_type}!')
+    st.toast(f'Successfully gathered stocks that are going {trend_type}!', icon=":material/check_circle:")
     return mapper 
 
 def view_top_stock_list(company_trend, sort_value: str = "market_cap", trend_type="down") : 
@@ -133,8 +134,12 @@ def view_top_stock_list(company_trend, sort_value: str = "market_cap", trend_typ
             ) + (stock,)
         ) for stock in company_trend
         if stock in all_company 
-    ]  
-    filter_company_with_kpi = sorted(filter_company_with_kpi, key=lambda x: tuple(x))
+    ] 
+    def remove_null(filter_company_with_kpi) : 
+        return [
+            val for val in filter_company_with_kpi if all([v is not None for v in val])
+        ]
+    filter_company_with_kpi = sorted(remove_null(filter_company_with_kpi), key=lambda x: tuple(x))
     for val in filter_company_with_kpi :  
         company_code = val[-1]
         if company_code in all_company :  
@@ -197,8 +202,7 @@ def filter_with_feature_map(trend_type, fetaure_map, trend = "Up") :
 st.title("Top picks for the week")
 st.write("Stocks that recently moved into an `upward` or `downward` trend based on 50 and 100 days EMA")
 
-
-options = ["market_cap", "current_price", "PE", "book_value", "face_value", "ROCE", "ROE", "last_detected_change"]
+options = ["market_cap", "current_price", "PE", "book_value", "ROCE", "ROE", "last_detected_change"]
 input_col1, input_col2 = st.columns(2)
 
 
@@ -209,6 +213,8 @@ with input_col1 :
     )
 
     selected_columns = st.multiselect(label="Select features", options= options)
+    with st.popover(label = f"Details", use_container_width= False, ) : 
+        st.markdown(MAPPER["quick_summary"])
 
 feature_map = {}
 with input_col2 :
@@ -227,7 +233,7 @@ with input_col2 :
 filtered_upwards = filter_with_feature_map(upwards, feature_map, trend='up')
 filtered_downwards = filter_with_feature_map(downwards, feature_map, trend='down')
 
-col1, _, col2 = st.columns([1, 0.1, 1])
+col1, _, col2 = st.columns([1, 0.1, 1]) 
 with col1 : 
     st.subheader("Going Up")
     view_top_stock_list(filtered_upwards, trend_type = "up", sort_value=sort_options)

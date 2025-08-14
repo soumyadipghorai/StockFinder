@@ -36,4 +36,4 @@ if btn :
 
     obj = TableExtractor(all_company[company_code]["url"])
     if obj.extract_data() : 
-        st.toast('Successfully extracted all the tables...')
+        st.toast('Successfully extracted all the tables...', icon=":material/check_circle:")

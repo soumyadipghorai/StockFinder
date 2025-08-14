@@ -4,6 +4,7 @@ from md.shareholder import *
 from md.balancesheet import *
 from md.pnl import *
 from md.ranking import *
+from md.top_picks import * 
 
 MAPPER = {
     "others" : "Google it! :)", 
@@ -61,4 +62,7 @@ MAPPER = {
     "EPS in Rs" : EPS, 
     "Dividend Payout" : dividend_payout, 
     "pnl_quarters" : pnl_quarters,
+
+    # top picks 
+    "quick_summary" : quick_summary
 } 
